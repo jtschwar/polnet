@@ -246,6 +246,11 @@ class TEM:
 
         # Micrographs loop
         mics = lio.load_mrc(self.__micgraphs_file)
+
+        # Save clean micrographs
+        clean_fname = self.__micgraphs_file.replace('micrographs','clean_micrographs')
+        lio.write_mrc(mics * -1, clean_fname)
+
         angs = np.abs(np.radians(self.__load_tangs_file()))
         n_angs = len(angs)
         shifts = mn + np.sin(angs)/np.sin(angs.max()) + np.random.normal(0, n_sigma, n_angs)

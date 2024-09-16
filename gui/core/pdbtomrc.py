@@ -101,7 +101,10 @@ def pdb_2_mrc(file_name, output_file, apix, res, offset, het, selected_atoms, mo
     print('Processing PDB:', file_name)
     
     # HO is a hydrogen attached to an oxygen. 'W' is water (infrequently found)
-    atomdefs={'H':(1.0,1.00794),'HO':(1.0,1.00794),'C':(6.0,12.0107),'A':(7.0,14.00674),'N':(7.0,14.00674),'O':(8.0,15.9994),'P':(15.0,30.973761),'K':(19.0,39.0983),'S':(16.0,32.066),'W':(18.0,1.00794*2.0+15.9994),'AU':(79.0,196.96655) }
+    # atomdefs={'H':(1.0,1.00794),'HO':(1.0,1.00794),'C':(6.0,12.0107),'A':(7.0,14.00674),'N':(7.0,14.00674),'O':(8.0,15.9994),'P':(15.0,30.973761),'K':(19.0,39.0983),'S':(16.0,32.066),'W':(18.0,1.00794*2.0+15.9994),'AU':(79.0,196.96655) }
+    atomdefs={'H':(1.0,1.00794),'HO':(1.0,1.00794),'C':(6.0,12.0107),'A':(7.0,14.00674),'N':(7.0,14.00674),'O':(8.0,15.9994),'P':(15.0,30.973761),
+            'K':(19.0,39.0983),'S':(16.0,32.066),'W':(18.0,1.00794*2.0+15.9994),'AU':(79.0,196.96655),'Mg':(12.0,24.305),'MG':(12.0,24.305),
+            'ZN':(30.0,65.38),'Zn':(30.0,65.38),'CA':(20.0,40.078) }
     transmap=str.maketrans("", "", "0123456789")
     
     try:
@@ -132,7 +135,8 @@ def pdb_2_mrc(file_name, output_file, apix, res, offset, het, selected_atoms, mo
             if selected_atoms and not (line[21] in selected_atoms):
                 continue
             try:
-                a = line[12:14].strip().translate(transmap)
+                # a = line[12:14].strip().translate(transmap)
+                a = line[76:78].strip().translate(transmap)                
                 x = float(line[30:38])
                 y = float(line[38:46])
                 z = float(line[46:54])
