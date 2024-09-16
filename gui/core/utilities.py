@@ -177,7 +177,8 @@ PMER_OVER_TOL = {pmer_over_tol}
     with open(file_path, "w") as file:
         file.write(file_content)
 
-    window_create_mmolecules(file_path)
+    print(f'[Create Macromolecules File] File Saved in {file_path}')
+    # window_create_mmolecules(file_path)
 
 
 def write_membrane(mb_type, mb_occ, mb_thick_rg, mb_layer_s_rg, mb_max_ecc, mb_over_tol, mb_min_rad, mb_den_cf_rg, outpath):
@@ -210,7 +211,8 @@ MB_DEN_CF_RG = {mb_den_cf_rg}
     with open(file_path, "w") as file:
         file.write(file_content)
 
-    window_create_membranes(file_path)
+    print(f'[Create Membrane Files] File Saved in {file_path}')
+    # window_create_membranes(file_path)
 
 
 def write_helix(hlix_type, hlix_mmer_rad, hlix_pmer_l, hlix_pmer_occ, hlix_min_p_len, hlix_hp_len, hlix_mz_len, hlix_mz_len_f, hlix_over_tol, hlix_min_nmmer, a_bprop, a_max_p_branch, mt_rad, mt_nunits, outpath):
