@@ -1,10 +1,10 @@
-import numpy as np
-import math
-
-import scipy.ndimage
-
+from Bio.PDB.MMCIFParser import MMCIFParser
+import biotite.structure.io.pdbx as pdbx
 from polnet import lio, utils, affine
-import skimage
+import skimage, math
+import scipy.ndimage
+import numpy as np
+
 
 # By default, sigma_factor = 1/(π * (2/log2)½) ≈ 0.187 which makes the Fourier transform(FT) of the distribution fall to
 # fall half maximum value at wavenumber 1 / resolution. Resolution here is 1A
@@ -101,61 +101,43 @@ def pdb_2_mrc(file_name, output_file, apix, res, offset, het, selected_atoms, mo
     print('Processing PDB:', file_name)
     
     # HO is a hydrogen attached to an oxygen. 'W' is water (infrequently found)
-    # atomdefs={'H':(1.0,1.00794),'HO':(1.0,1.00794),'C':(6.0,12.0107),'A':(7.0,14.00674),'N':(7.0,14.00674),'O':(8.0,15.9994),'P':(15.0,30.973761),'K':(19.0,39.0983),'S':(16.0,32.066),'W':(18.0,1.00794*2.0+15.9994),'AU':(79.0,196.96655) }
     atomdefs={'H':(1.0,1.00794),'HO':(1.0,1.00794),'C':(6.0,12.0107),'A':(7.0,14.00674),'N':(7.0,14.00674),'O':(8.0,15.9994),'P':(15.0,30.973761),
             'K':(19.0,39.0983),'S':(16.0,32.066),'W':(18.0,1.00794*2.0+15.9994),'AU':(79.0,196.96655),'Mg':(12.0,24.305),'MG':(12.0,24.305),
             'ZN':(30.0,65.38),'Zn':(30.0,65.38),'CA':(20.0,40.078) }
     transmap=str.maketrans("", "", "0123456789")
-    
-    try:
-        infile = open(file_name, "r")
-    except:
-        raise IOError("%s is an invalid file name" % file_name)
 
     amin = [1.0e20, 1.0e20, 1.0e20]
     amax = [-1.0e20, -1.0e20, -1.0e20]
     atoms = {}
     coords = []
 
-    # parse the pdb file and pull out relevant atoms
-    stm = False
-    for line in infile:
-        # only for one atom
-        if model is not None:
-            if line[:5] == "MODEL":
-                if int(line.split()[1]) == model:
-                    stm = True
-            if stm and line[:6] == "ENDMDL":
-                break
-            if not stm:
-                continue
+    try: 
+        with open(file_name, 'r') as cif_file:
+            pdbx_file = pdbx.PDBxFile.read(cif_file)
+        structure = pdbx.get_structure(pdbx_file)
+    except:
+        raise IOError('%s is an invalid file name' % file_name)
+
+    for atom in structure:
+
+        for ii in range(atom.shape[0]):
+
+            # Get the atom's element (e.g., C, N, O)
+            a = atom[ii].element     
             
-        # process all models
-        if line[:4] == 'ATOM' or (line[:6] == 'HETATM' and het):
-            if selected_atoms and not (line[21] in selected_atoms):
-                continue
-            try:
-                # a = line[12:14].strip().translate(transmap)
-                a = line[76:78].strip().translate(transmap)                
-                x = float(line[30:38])
-                y = float(line[38:46])
-                z = float(line[46:54])
-                coords.append([x, y, z])
-            except:
-                print("PDB Parse error:\n%s\n'%s','%s','%s'  '%s','%s','%s'\n" % (
-                    line, line[12:14], line[6:11], line[22:26], line[30:38], line[38:46], line[46:54]))
-                print(a, x, y, z)
+            # Get the atom's coordinates (x, y, z)
+            x = atom[ii].coord[0]
+            y = atom[ii].coord[1]
+            z = atom[ii].coord[2]
+            coords.append( [x, y, z] )
 
             if a in atoms:
                 atoms[a].append([x, y, z])
             else:
                 atoms[a] = [[x, y, z]]
-        
+
             amin = [min(x, amin[0]), min(y, amin[1]), min(z, amin[2])]
-            amax = [max(x, amax[0]), max(y, amax[1]), max(z, amax[2])]
-
-
-    infile.close()
+            amax = [max(x, amax[0]), max(y, amax[1]), max(z, amax[2])]   
    
     # Prepare coords
     coords = np.array(coords, dtype=np.float32)
