@@ -24,7 +24,8 @@ dependencies = [
     "scikit-image == 0.22.0",
     "jupyter == 1.0.0",
     "wget == 3.2",
-    "ipyfilechooser == 0.6.0"
+    "ipyfilechooser == 0.6.0",
+    "biopython == 1.83"
 ]
 
 [tool.setuptools.packages]
