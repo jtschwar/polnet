@@ -14,18 +14,18 @@ authors = [
 keywords = ["cryo electron tomogramphy", "synthetic data"]
 
 dependencies = [
-    "numpy == 1.26.3",
-    "scipy == 1.11.4",
-    "mrcfile == 1.4.3",
-    "jax == 0.4.23",
-    "vtk == 9.3.0",
-    "pandas == 2.1.4",
-    "pynrrd == 1.0.0",
-    "scikit-image == 0.22.0",
-    "jupyter == 1.0.0",
-    "wget == 3.2",
-    "ipyfilechooser == 0.6.0",
-    "biopython == 1.83"
+    "numpy",
+    "scipy",
+    "mrcfile",
+    "jax",
+    "vtk",
+    "pandas",
+    "pynrrd",
+    "scikit-image",
+    "jupyter",
+    "wget",
+    "ipyfilechooser",
+    "biopython"
 ]
 
 [tool.setuptools.packages]
